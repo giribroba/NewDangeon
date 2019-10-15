@@ -195,8 +195,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1667229263
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 8793639957104055765, guid: fabe956f7c63498428ff7dae64d9b3d9,
     type: 3}
@@ -283,8 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3c5ff267cfb2445992d007b80df34d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pulos: 0
-  doubleJump: 1
+  podePuloDuplo: 0
   velocidade: 4
   forcaPulo: 200
   detectaChaoR: 0.184
@@ -481,6 +480,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265879723136453630, guid: 4a0ce077019d68b41945d9f526e1e09b,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: -720370101
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265879723136453630, guid: 4a0ce077019d68b41945d9f526e1e09b,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a0ce077019d68b41945d9f526e1e09b, type: 3}
@@ -686,7 +695,7 @@ PrefabInstance:
     - target: {fileID: 8265879723136453629, guid: 4a0ce077019d68b41945d9f526e1e09b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.5619044
+      value: -2.4409
       objectReference: {fileID: 0}
     - target: {fileID: 8265879723136453629, guid: 4a0ce077019d68b41945d9f526e1e09b,
         type: 3}

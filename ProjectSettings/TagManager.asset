@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Cenario
+    uniqueID: 3574597195
+    locked: 0
+  - name: Entidade
+    uniqueID: 1667229263
+    locked: 0

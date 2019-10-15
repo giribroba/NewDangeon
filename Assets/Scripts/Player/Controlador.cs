@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Controlador : MonoBehaviour
@@ -8,9 +7,9 @@ public class Controlador : MonoBehaviour
     private Animator animPlayer;
     private bool pula, noChao;
     private Rigidbody2D rbPlayer;
-    [SerializeField] private int pulos;
+    private bool puloDuplo;
 
-    [SerializeField] private bool puloDuplo;
+    [SerializeField] private bool podePuloDuplo;
     [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize;
     [SerializeField] private Vector3 detectaChao;
     [SerializeField] private LayerMask chao;
@@ -37,13 +36,13 @@ public class Controlador : MonoBehaviour
         //Pulo
         pula = (Input.GetButtonDown("Jump"));
         noChao = Physics2D.OverlapCircle(detectaChao + this.transform.position, detectaChaoR, chao);
-        pulos = ((noChao)? ((puloDuplo)? 1 : 0): pulos);
+        puloDuplo = ((noChao) ? podePuloDuplo : puloDuplo);
 
         animPlayer.SetBool("pular", !noChao);
-        animPlayer.SetFloat("pulo",(rbPlayer.velocity.y < 0)? 1 : 0);
+        animPlayer.SetFloat("pulo", (rbPlayer.velocity.y < 0) ? 1 : 0);
 
         //Deslize
-        if(Input.GetButtonDown("Fire2") && !animPlayer.GetBool("deslizando"))
+        if (Input.GetButtonDown("Fire2") && !animPlayer.GetBool("deslizando"))
             StartCoroutine("Deslizar");
     }
 
@@ -53,9 +52,9 @@ public class Controlador : MonoBehaviour
         rbPlayer.velocity = new Vector2(movimento * velocidade, rbPlayer.velocity.y);
 
         //Pular
-        if (pula && (pulos > 0 || noChao))
+        if (pula && (puloDuplo || noChao))
         {
-            pulos -= ((!noChao)? 1 : 0);
+            puloDuplo = noChao;
             rbPlayer.velocity = Vector2.right * rbPlayer.velocity;
             rbPlayer.AddForce(Vector2.up * forcaPulo);
             pula = false;
@@ -64,7 +63,7 @@ public class Controlador : MonoBehaviour
         //Deslizar
         if (animPlayer.GetBool("deslizando"))
         {
-            rbPlayer.velocity = new Vector2(velocidadeDeslizar * ((spritePlayer.flipX)? -1 : 1), rbPlayer.velocity.y);
+            rbPlayer.velocity = new Vector2(velocidadeDeslizar * ((spritePlayer.flipX) ? -1 : 1), rbPlayer.velocity.y);
         }
     }
 
