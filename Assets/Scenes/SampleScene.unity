@@ -258,7 +258,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.009834692, y: -0.10804188}
+  m_Offset: {x: 0, y: -0.23}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -269,7 +269,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.36740246, y: 0.87608373}
+  m_Size: {x: 0.3041751, y: 0.6396682}
   m_EdgeRadius: 0
 --- !u!114 &173873748
 MonoBehaviour:
@@ -283,16 +283,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3c5ff267cfb2445992d007b80df34d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  podePuloDuplo: 0
+  podePuloDuplo: 1
   velocidade: 4
   forcaPulo: 200
-  detectaChaoR: 0.184
+  detectaChaoR: 0.1536
   velocidadeDeslizar: 6
   tempoDeslize: 0.5
-  detectaChao: {x: -0.009834692, y: -0.53, z: 0}
   chao:
     serializedVersion: 2
     m_Bits: 256
+  detectaChao: {x: 0, y: -0.53}
+  detectaInimigos: {x: 0.41, y: 0}
+  cdAtaque: 0.5
+  detectaInimigosR: 0.41
+  colliderNorm: {x: 0.3041751, y: 0.9008248}
+  colliderPeq: {x: 0.3041751, y: 0.6396682}
+  colliderNormPos: {x: 0, y: -0.09762943}
+  colliderPeqPos: {x: 0, y: -0.23}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,16 +487,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8265879723136453630, guid: 4a0ce077019d68b41945d9f526e1e09b,
-        type: 3}
-      propertyPath: m_SortingLayerID
-      value: -720370101
-      objectReference: {fileID: 0}
-    - target: {fileID: 8265879723136453630, guid: 4a0ce077019d68b41945d9f526e1e09b,
-        type: 3}
-      propertyPath: m_SortingLayer
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a0ce077019d68b41945d9f526e1e09b, type: 3}

@@ -5,14 +5,23 @@ public class Controlador : MonoBehaviour
 {
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
-    private float velocidadeV;
-    private bool pula, noChao, puloDuplo;
+    private float velocidadeV, cdAtaquePercorrido;
+    private bool pula, noChao, puloDuplo, atacando;
     private Rigidbody2D rbPlayer;
 
+    [Header("Movimentação")]
     [SerializeField] private bool podePuloDuplo;
     [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize;
-    [SerializeField] private Vector3 detectaChao;
     [SerializeField] private LayerMask chao;
+    [SerializeField] private Vector2 detectaChao;
+
+    [Header("Ataque")]
+    [SerializeField] private Vector2 detectaInimigos;
+    [SerializeField] private float cdAtaque, detectaInimigosR;
+
+    [Header("Colliders")]
+    [SerializeField] Vector2 colliderNorm;
+    [SerializeField] Vector2 colliderPeq, colliderNormPos, colliderPeqPos;
     private float movimento;
 
     void Start()
@@ -35,10 +44,10 @@ public class Controlador : MonoBehaviour
 
         //Pulo
         pula = (Input.GetButtonDown("Jump"));
-        noChao = Physics2D.OverlapCircle(detectaChao + this.transform.position, detectaChaoR, chao);
+        noChao = Physics2D.OverlapCircle(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR, chao);
         puloDuplo = ((noChao) ? podePuloDuplo : puloDuplo);
 
-        animPlayer.SetBool("pular", !noChao);
+        animPlayer.SetBool("pular", !noChao && !(Input.GetButtonDown("Jump") && puloDuplo));
         animPlayer.SetFloat("pulo", (rbPlayer.velocity.y < 0) ? 1 : 0);
 
         //Deslize
@@ -47,13 +56,22 @@ public class Controlador : MonoBehaviour
 
         //Abaixar
         animPlayer.SetBool("abaixado", (Input.GetAxisRaw("Vertical") < 0));
-        velocidadeV = (animPlayer.GetBool("abaixado")? 0: velocidade);
+        this.GetComponent<BoxCollider2D>().size = (animPlayer.GetBool("abaixado") ? colliderPeq : colliderNorm);
+        this.GetComponent<BoxCollider2D>().offset = (animPlayer.GetBool("abaixado") ? colliderPeqPos : colliderNormPos);
+
+        //Ataque
+        cdAtaquePercorrido -= Time.deltaTime;
+        if (Input.GetButtonDown("Fire1") && (cdAtaquePercorrido <= 0 || animPlayer.GetFloat("ataque") > 0))
+        {
+            animPlayer.SetTrigger("atacando");
+            animPlayer.SetFloat("ataque", animPlayer.GetFloat("ataque") + (animPlayer.GetFloat("ataque") >= 1 ? -animPlayer.GetFloat("ataque") : 0.5f));
+        }
     }
 
     private void FixedUpdate()
     {
         //Andar
-        rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y);
+        rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y * (animPlayer.GetBool("abaixado") ? 1 : 0));
 
         //Pular
         if (pula && (puloDuplo || noChao))
@@ -78,9 +96,23 @@ public class Controlador : MonoBehaviour
         animPlayer.SetBool("deslizando", false);
     }
 
+    IEnumerator Ataque(float tempo)
+    {
+        velocidadeV = 0;
+        atacando = true;
+        yield return new WaitForSeconds(tempo);
+        atacando = false;
+        velocidadeV = velocidade;
+    }
+
     private void OnDrawGizmos()
     {
+        //Pulo
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR);
+
+        //Ataque
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(detectaChao + this.transform.position, detectaChaoR);
+        Gizmos.DrawWireSphere((detectaInimigos - Vector2.right * (detectaInimigos *((spritePlayer.flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR);
     }
 }
