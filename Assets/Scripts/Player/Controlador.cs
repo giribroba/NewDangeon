@@ -5,9 +5,9 @@ public class Controlador : MonoBehaviour
 {
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
-    private bool pula, noChao;
+    private float velocidadeV;
+    private bool pula, noChao, puloDuplo;
     private Rigidbody2D rbPlayer;
-    private bool puloDuplo;
 
     [SerializeField] private bool podePuloDuplo;
     [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize;
@@ -44,12 +44,16 @@ public class Controlador : MonoBehaviour
         //Deslize
         if (Input.GetButtonDown("Fire2") && !animPlayer.GetBool("deslizando"))
             StartCoroutine("Deslizar");
+
+        //Abaixar
+        animPlayer.SetBool("abaixado", (Input.GetAxisRaw("Vertical") < 0));
+        velocidadeV = (animPlayer.GetBool("abaixado")? 0: velocidade);
     }
 
     private void FixedUpdate()
     {
         //Andar
-        rbPlayer.velocity = new Vector2(movimento * velocidade, rbPlayer.velocity.y);
+        rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y);
 
         //Pular
         if (pula && (puloDuplo || noChao))
