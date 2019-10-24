@@ -29,6 +29,7 @@ public class Controlador : MonoBehaviour
         animPlayer = GetComponent<Animator>();
         rbPlayer = GetComponent<Rigidbody2D>();
         spritePlayer = GetComponent<SpriteRenderer>();
+        velocidadeV = velocidade;
     }
 
     void Update()
@@ -37,13 +38,11 @@ public class Controlador : MonoBehaviour
         movimento = Input.GetAxisRaw("Horizontal");
 
         if (movimento != 0 && !animPlayer.GetBool("deslizando"))
-        {
             spritePlayer.flipX = (movimento < 0);
-        }
         animPlayer.SetBool("andando", movimento != 0);
 
         //Pulo
-        pula = (Input.GetButtonDown("Jump"));
+        pula = (Input.GetButtonDown("Jump") && !animPlayer.GetBool("abaixado"));
         noChao = Physics2D.OverlapCircle(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR, chao);
         puloDuplo = ((noChao) ? podePuloDuplo : puloDuplo);
 
@@ -71,7 +70,7 @@ public class Controlador : MonoBehaviour
     private void FixedUpdate()
     {
         //Andar
-        rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y * (animPlayer.GetBool("abaixado") ? 1 : 0));
+        rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y);
 
         //Pular
         if (pula && (puloDuplo || noChao))
@@ -113,6 +112,6 @@ public class Controlador : MonoBehaviour
 
         //Ataque
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere((detectaInimigos - Vector2.right * (detectaInimigos *((spritePlayer.flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR);
+        Gizmos.DrawWireSphere((detectaInimigos - Vector2.right * (detectaInimigos *((GetComponent<SpriteRenderer>().flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR);
     }
 }
