@@ -5,6 +5,7 @@ public class Controlador : MonoBehaviour
 {
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
+    private Collider2D[] atingidos;
     private float velocidadeV, cdAtaquePercorrido;
     private bool pula, noChao, puloDuplo, atacando;
     private Rigidbody2D rbPlayer;
@@ -12,7 +13,7 @@ public class Controlador : MonoBehaviour
     [Header("Movimentação")]
     [SerializeField] private bool podePuloDuplo;
     [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize;
-    [SerializeField] private LayerMask chao;
+    [SerializeField] private LayerMask chaoL, inimigosL;
     [SerializeField] private Vector2 detectaChao;
 
     [Header("Ataque")]
@@ -43,7 +44,7 @@ public class Controlador : MonoBehaviour
 
         //Pulo
         pula = (Input.GetButtonDown("Jump") && !animPlayer.GetBool("abaixado"));
-        noChao = Physics2D.OverlapCircle(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR, chao);
+        noChao = Physics2D.OverlapCircle(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR, chaoL);
         puloDuplo = ((noChao) ? podePuloDuplo : puloDuplo);
 
         animPlayer.SetBool("pular", !noChao && !(Input.GetButtonDown("Jump") && puloDuplo));
@@ -88,6 +89,15 @@ public class Controlador : MonoBehaviour
         }
     }
 
+    private void Ataque()
+    {
+        atingidos = Physics2D.OverlapCircleAll((detectaInimigos - Vector2.right * (detectaInimigos *((GetComponent<SpriteRenderer>().flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR, inimigosL);
+        for (int i = 0; i < atingidos.Length; i++)
+        {
+            atingidos[i].gameObject.GetComponent<Inimigo>().Dano();
+        }
+    }
+
     IEnumerator Deslizar()
     {
         animPlayer.SetBool("deslizando", true);
@@ -99,7 +109,9 @@ public class Controlador : MonoBehaviour
     {
         velocidadeV = 0;
         atacando = true;
-        yield return new WaitForSeconds(tempo);
+        yield return new WaitForSeconds(tempo/2);
+        Ataque();
+        yield return new WaitForSeconds(tempo/2);
         atacando = false;
         velocidadeV = velocidade;
     }
