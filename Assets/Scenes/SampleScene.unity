@@ -289,9 +289,12 @@ MonoBehaviour:
   detectaChaoR: 0.1536
   velocidadeDeslizar: 6
   tempoDeslize: 0.5
-  chao:
+  chaoL:
     serializedVersion: 2
     m_Bits: 256
+  inimigosL:
+    serializedVersion: 2
+    m_Bits: 512
   detectaChao: {x: 0, y: -0.53}
   detectaInimigos: {x: 0.41, y: 0}
   cdAtaque: 0.5
