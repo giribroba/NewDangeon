@@ -7,13 +7,14 @@ public class Controlador : MonoBehaviour
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
     private Collider2D[] atingidos;
-    private float velocidadeV, cdAtaquePercorrido;
+    private float velocidadeV, cdAtaquePercorrido, tempoParticulaPercorrido;
     private bool pula, noChao, puloDuplo, atacando;
     private Rigidbody2D rbPlayer;
 
     [Header("Movimentação")]
+    [SerializeField] GameObject particula;
     [SerializeField] private bool podePuloDuplo;
-    [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize;
+    [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize, tempoParticula;
     [SerializeField] private LayerMask chaoL, inimigosL;
     [SerializeField] private Vector2 detectaChao;
 
@@ -42,6 +43,20 @@ public class Controlador : MonoBehaviour
         else
             velocidadeV = velocidade;
 
+        //Controle particula
+        tempoParticulaPercorrido += Time.deltaTime;
+        if(movimento != 0)
+            particula.transform.eulerAngles = new Vector3(0 , (movimento < 0 ) ? 90 : -90, 0);
+
+        if(velocidadeV == 0 || movimento == 0 || !noChao)
+            tempoParticulaPercorrido = 0;
+
+        if (tempoParticulaPercorrido < tempoParticula && noChao)
+            particula.GetComponent<ParticleSystem>().enableEmission = movimento != 0;
+
+        else
+            particula.GetComponent<ParticleSystem>().enableEmission = false;
+
         //Flip e input movimento
         movimento = Input.GetAxisRaw("Horizontal");
 
@@ -69,7 +84,7 @@ public class Controlador : MonoBehaviour
 
         //Input ataque
         cdAtaquePercorrido -= Time.deltaTime;
-        if (cdAtaquePercorrido < 0)
+        if (cdAtaquePercorrido < -0.2f)
             animPlayer.SetFloat("ataque",0);
         if (Input.GetButtonDown("Fire1") && cliques < 3)
             cliques++;
@@ -97,7 +112,7 @@ public class Controlador : MonoBehaviour
         }
 
         //Ataque
-        if (cliques > 0 && !atacando)
+        if (cliques > 0 && !atacando && cdAtaquePercorrido < 0)
         {
             cdAtaquePercorrido = cdAtaque;
             atacando = true;
