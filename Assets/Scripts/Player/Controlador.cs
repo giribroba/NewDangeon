@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Controlador : MonoBehaviour
 {
+    private int cliques;
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
     private Collider2D[] atingidos;
@@ -35,10 +36,16 @@ public class Controlador : MonoBehaviour
 
     void Update()
     {
+        //Controle velocidade
+        if (animPlayer.GetBool("abaixado") || atacando)
+            velocidadeV = 0;
+        else
+            velocidadeV = velocidade;
+
         //Flip e input movimento
         movimento = Input.GetAxisRaw("Horizontal");
 
-        if (movimento != 0 && !animPlayer.GetBool("deslizando"))
+        if (movimento != 0 && !animPlayer.GetBool("deslizando") && !atacando)
             spritePlayer.flipX = (movimento < 0);
         animPlayer.SetBool("andando", movimento != 0);
 
@@ -59,13 +66,14 @@ public class Controlador : MonoBehaviour
         this.GetComponent<BoxCollider2D>().size = (animPlayer.GetBool("abaixado") ? colliderPeq : colliderNorm);
         this.GetComponent<BoxCollider2D>().offset = (animPlayer.GetBool("abaixado") ? colliderPeqPos : colliderNormPos);
 
-        //Ataque
+
+        //Input ataque
         cdAtaquePercorrido -= Time.deltaTime;
-        if (Input.GetButtonDown("Fire1") && (cdAtaquePercorrido <= 0 || animPlayer.GetFloat("ataque") > 0))
-        {
-            animPlayer.SetTrigger("atacando");
-            animPlayer.SetFloat("ataque", animPlayer.GetFloat("ataque") + (animPlayer.GetFloat("ataque") >= 1 ? -animPlayer.GetFloat("ataque") : 0.5f));
-        }
+        if (cdAtaquePercorrido < 0)
+            animPlayer.SetFloat("ataque",0);
+        if (Input.GetButtonDown("Fire1") && cliques < 3)
+            cliques++;
+ 
     }
 
     private void FixedUpdate()
@@ -87,6 +95,16 @@ public class Controlador : MonoBehaviour
         {
             rbPlayer.velocity = new Vector2(velocidadeDeslizar * ((spritePlayer.flipX) ? -1 : 1), rbPlayer.velocity.y);
         }
+
+        //Ataque
+        if (cliques > 0 && !atacando)
+        {
+            cdAtaquePercorrido = cdAtaque;
+            atacando = true;
+            cliques--;
+            animPlayer.SetTrigger("atacando");
+            animPlayer.SetFloat("ataque", animPlayer.GetFloat("ataque") + (animPlayer.GetFloat("ataque") == 1 ? -animPlayer.GetFloat("ataque") : 0.5f));
+        }
     }
 
     private void Ataque()
@@ -98,22 +116,16 @@ public class Controlador : MonoBehaviour
         }
     }
 
+    private void TerminouAtaque()
+    {
+        atacando = false;
+    }
+
     IEnumerator Deslizar()
     {
         animPlayer.SetBool("deslizando", true);
         yield return new WaitForSeconds(tempoDeslize);
         animPlayer.SetBool("deslizando", false);
-    }
-
-    IEnumerator Ataque(float tempo)
-    {
-        velocidadeV = 0;
-        atacando = true;
-        yield return new WaitForSeconds(tempo/2);
-        Ataque();
-        yield return new WaitForSeconds(tempo/2);
-        atacando = false;
-        velocidadeV = velocidade;
     }
 
     private void OnDrawGizmos()

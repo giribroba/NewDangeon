@@ -289,12 +289,15 @@ MonoBehaviour:
   detectaChaoR: 0.1536
   velocidadeDeslizar: 6
   tempoDeslize: 0.5
-  chao:
+  chaoL:
     serializedVersion: 2
     m_Bits: 256
+  inimigosL:
+    serializedVersion: 2
+    m_Bits: 512
   detectaChao: {x: 0, y: -0.53}
   detectaInimigos: {x: 0.41, y: 0}
-  cdAtaque: 0.5
+  cdAtaque: 0.8
   detectaInimigosR: 0.41
   colliderNorm: {x: 0.3041751, y: 0.9008248}
   colliderPeq: {x: 0.3041751, y: 0.6396682}
@@ -614,7 +617,9 @@ GameObject:
   - component: {fileID: 977577783}
   - component: {fileID: 977577782}
   - component: {fileID: 977577784}
-  m_Layer: 0
+  - component: {fileID: 977577786}
+  - component: {fileID: 977577785}
+  m_Layer: 9
   m_Name: Bonecao
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,6 +708,44 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!61 &977577785
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977577781}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.02, y: 3.24}
+    newSize: {x: 2.02, y: 3.24}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.02, y: 3.24}
+  m_EdgeRadius: 0
+--- !u!114 &977577786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977577781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c87dbfa298a12248a864be97d0b5ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1269682515
 GameObject:
   m_ObjectHideFlags: 0

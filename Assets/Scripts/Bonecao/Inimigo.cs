@@ -12,6 +12,6 @@ public class Inimigo : MonoBehaviour
 
     public void Dano()
     {
-        anim.SetTrigger("apanhou");
+        anim.SetTrigger("Apanhou");
     }
 }
