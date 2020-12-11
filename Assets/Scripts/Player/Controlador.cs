@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Controlador : MonoBehaviour
 {
+    private Transform pPosicao;
     private int cliques;
     private SpriteRenderer spritePlayer;
     private Animator animPlayer;
@@ -29,6 +30,7 @@ public class Controlador : MonoBehaviour
 
     void Start()
     {
+        pPosicao = this.transform.GetChild(0).transform;
         animPlayer = GetComponent<Animator>();
         rbPlayer = GetComponent<Rigidbody2D>();
         spritePlayer = GetComponent<SpriteRenderer>();
@@ -37,11 +39,18 @@ public class Controlador : MonoBehaviour
 
     void Update()
     {
+        print(noChao);
         //Controle velocidade
         if (animPlayer.GetBool("abaixado") || atacando)
             velocidadeV = 0;
         else
             velocidadeV = velocidade;
+
+        //Posição particula
+        if (noChao)
+        {
+            particula.transform.position = pPosicao.position;
+        }
 
         //Controle particula
         tempoParticulaPercorrido += Time.deltaTime;
@@ -51,7 +60,7 @@ public class Controlador : MonoBehaviour
         if(velocidadeV == 0 || movimento == 0 || !noChao)
             tempoParticulaPercorrido = 0;
 
-        if (tempoParticulaPercorrido < tempoParticula && noChao)
+        if (tempoParticulaPercorrido < tempoParticula && noChao && !atacando)
             particula.GetComponent<ParticleSystem>().enableEmission = movimento != 0;
 
         else
@@ -69,11 +78,20 @@ public class Controlador : MonoBehaviour
         noChao = Physics2D.OverlapCircle(detectaChao + new Vector2(this.transform.position.x, this.transform.position.y), detectaChaoR, chaoL);
         puloDuplo = ((noChao) ? podePuloDuplo : puloDuplo);
 
+        if (pula && (puloDuplo || noChao))
+        {
+            puloDuplo = noChao;
+            rbPlayer.velocity = Vector2.right * rbPlayer.velocity;
+            rbPlayer.AddForce(Vector2.up * forcaPulo);
+            pula = false;
+        }
+
+
         animPlayer.SetBool("pular", !noChao && !(Input.GetButtonDown("Jump") && puloDuplo));
         animPlayer.SetFloat("pulo", (rbPlayer.velocity.y < 0) ? 1 : 0);
 
         //Deslize
-        if (Input.GetButtonDown("Fire2") && !animPlayer.GetBool("deslizando"))
+        if (Input.GetButtonDown("Fire2") && !animPlayer.GetBool("deslizando") && !atacando)
             StartCoroutine("Deslizar");
 
         //Abaixar
@@ -86,7 +104,7 @@ public class Controlador : MonoBehaviour
         cdAtaquePercorrido -= Time.deltaTime;
         if (cdAtaquePercorrido < -0.2f)
             animPlayer.SetFloat("ataque",0);
-        if (Input.GetButtonDown("Fire1") && cliques < 3)
+        if (Input.GetButtonDown("Fire1") && cliques < 1)
             cliques++;
  
     }
@@ -97,14 +115,7 @@ public class Controlador : MonoBehaviour
         rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y);
 
         //Pular
-        if (pula && (puloDuplo || noChao))
-        {
-            puloDuplo = noChao;
-            rbPlayer.velocity = Vector2.right * rbPlayer.velocity;
-            rbPlayer.AddForce(Vector2.up * forcaPulo);
-            pula = false;
-        }
-
+     
         //Deslizar
         if (animPlayer.GetBool("deslizando"))
         {
