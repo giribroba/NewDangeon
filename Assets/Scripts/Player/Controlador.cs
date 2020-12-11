@@ -13,7 +13,7 @@ public class Controlador : MonoBehaviour
     private Rigidbody2D rbPlayer;
 
     [Header("Movimentação")]
-    [SerializeField] GameObject particula;
+    [SerializeField] GameObject particula, bonecao;
     [SerializeField] private bool podePuloDuplo;
     [SerializeField] private float velocidade, forcaPulo, detectaChaoR, velocidadeDeslizar, tempoDeslize, tempoParticula;
     [SerializeField] private LayerMask chaoL, inimigosL;
@@ -39,9 +39,11 @@ public class Controlador : MonoBehaviour
 
     void Update()
     {
-        print(noChao);
+        if (Input.GetKeyDown(KeyCode.E))
+            Instantiate(bonecao, (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+
         //Controle velocidade
-        if (animPlayer.GetBool("abaixado") || atacando)
+        if (animPlayer.GetBool("abaixado") || (atacando && noChao))
             velocidadeV = 0;
         else
             velocidadeV = velocidade;
@@ -54,10 +56,10 @@ public class Controlador : MonoBehaviour
 
         //Controle particula
         tempoParticulaPercorrido += Time.deltaTime;
-        if(movimento != 0)
-            particula.transform.eulerAngles = new Vector3(0 , (movimento < 0 ) ? 90 : -90, 0);
+        if (movimento != 0 && noChao)
+            particula.transform.eulerAngles = new Vector3(0, (movimento < 0) ? 90 : -90, 0);
 
-        if(velocidadeV == 0 || movimento == 0 || !noChao)
+        if (velocidadeV == 0 || movimento == 0 || !noChao)
             tempoParticulaPercorrido = 0;
 
         if (tempoParticulaPercorrido < tempoParticula && noChao && !atacando)
@@ -103,10 +105,10 @@ public class Controlador : MonoBehaviour
         //Input ataque
         cdAtaquePercorrido -= Time.deltaTime;
         if (cdAtaquePercorrido < -0.2f)
-            animPlayer.SetFloat("ataque",0);
+            animPlayer.SetFloat("ataque", 0);
         if (Input.GetButtonDown("Fire1") && cliques < 1)
             cliques++;
- 
+
     }
 
     private void FixedUpdate()
@@ -115,7 +117,7 @@ public class Controlador : MonoBehaviour
         rbPlayer.velocity = new Vector2(movimento * velocidadeV, rbPlayer.velocity.y);
 
         //Pular
-     
+
         //Deslizar
         if (animPlayer.GetBool("deslizando"))
         {
@@ -135,7 +137,7 @@ public class Controlador : MonoBehaviour
 
     private void Ataque()
     {
-        atingidos = Physics2D.OverlapCircleAll((detectaInimigos - Vector2.right * (detectaInimigos *((GetComponent<SpriteRenderer>().flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR, inimigosL);
+        atingidos = Physics2D.OverlapCircleAll((detectaInimigos - Vector2.right * (detectaInimigos * ((GetComponent<SpriteRenderer>().flipX) ? 2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR, inimigosL);
         for (int i = 0; i < atingidos.Length; i++)
         {
             atingidos[i].gameObject.GetComponent<Inimigo>().Dano();
@@ -162,6 +164,22 @@ public class Controlador : MonoBehaviour
 
         //Ataque
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere((detectaInimigos - Vector2.right * (detectaInimigos *((GetComponent<SpriteRenderer>().flipX)?2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR);
+        Gizmos.DrawWireSphere((detectaInimigos - Vector2.right * (detectaInimigos * ((GetComponent<SpriteRenderer>().flipX) ? 2 : 0))) + new Vector2(this.transform.position.x, this.transform.position.y), detectaInimigosR);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "item")
+        {
+            var nome = other.name.Split('(')[0];
+
+            if (Inventario.inv_itens.ContainsKey(nome))
+                Inventario.inv_itens[nome]++;
+            else
+                Inventario.inv_itens.Add(nome, 1);
+
+            Inventario.Atualizou();
+            Destroy(other.gameObject);
+        }
     }
 }
