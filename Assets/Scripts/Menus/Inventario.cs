@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
-using UnityEngine.UI;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Inventario : MonoBehaviour
 {
+    private static string arquivo;
     public static Dictionary<string, int> inv_itens = new Dictionary<string, int>();
     private static Vector2 organizador;
     private bool aberto;
@@ -15,9 +18,11 @@ public class Inventario : MonoBehaviour
 
     private void Start()
     {
+        arquivo = Application.persistentDataPath;
         inventarioStatic = inventario;
         slotStatic = slot;
         posicaoInicialStatic = posicaoInicial;
+        Carregar();
     }
 
     void Update()
@@ -28,8 +33,9 @@ public class Inventario : MonoBehaviour
             aberto = !aberto;
     }
 
-    public static void Atualizou()
+    public static void Atualizar()
     {
+        Salvar();
         organizador = new Vector2(-1, 0);
 
         if (slots.Count != 0)
@@ -49,13 +55,29 @@ public class Inventario : MonoBehaviour
                 organizador = new Vector2(organizador.x + 1, organizador.y);
 
             print(organizador);
-            var temp = Instantiate(slotStatic, ((Vector2)posicaoInicialStatic.transform.position) + (organizador * 35), Quaternion.identity, inventarioStatic.transform);
+            var temp = Instantiate(slotStatic, ((Vector2)posicaoInicialStatic.transform.position) + (organizador / 2), Quaternion.identity, inventarioStatic.transform);
             slots.Add(temp);
 
             temp.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Itens/" + i.Key);
             temp.transform.GetChild(1).GetComponent<Text>().text = i.Value.ToString();
 
         }
+    }
+
+    public static void Salvar()
+    {
+        File.WriteAllText(arquivo + "/inv.sinv", JsonConvert.SerializeObject(inv_itens));
+    }
+
+    private void Carregar()
+    {
+        if (File.Exists(arquivo + "/inv.sinv"))
+        {
+            inv_itens = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(arquivo + "/inv.sinv"));
+            Atualizar();
+        }
+        else
+            File.Create(arquivo + "/inv.sinv").Close();
     }
 
 }

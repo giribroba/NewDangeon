@@ -178,7 +178,7 @@ public class Controlador : MonoBehaviour
             else
                 Inventario.inv_itens.Add(nome, 1);
 
-            Inventario.Atualizou();
+            Inventario.Atualizar();
             Destroy(other.gameObject);
         }
     }
