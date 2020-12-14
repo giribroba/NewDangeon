@@ -73,6 +73,7 @@ public class Inventario : MonoBehaviour
     {
         if (File.Exists(arquivo + "/inv.sinv"))
         {
+            //Usei o Json do .net pq aparentemente o JsonUtility não consegue salvar Dicionários.
             inv_itens = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(arquivo + "/inv.sinv"));
             Atualizar();
         }
